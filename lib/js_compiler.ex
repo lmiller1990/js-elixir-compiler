@@ -28,16 +28,16 @@ defmodule Tokenizer do
 
   def match_token(token) do
     cond do
-      String.match?(token, ~r/\s/) -> {:whitespace, token}
-      String.match?(token, ~r/^function$/) -> {:function, token}
-      String.match?(token, ~r/^return$/) -> {:return, token}
-      String.match?(token, ~r/^\+$/) -> {:add, token}
-      String.match?(token, ~r/^[0-9]$/) -> {:integer, token}
+      token == "function" -> {:function, token}
+      token == "return" -> {:return, token}
+      token == "+" -> {:add, token}
+      token == "(" -> {:open_paren, token}
+      token == ")" -> {:close_paren, token}
+      token == "{" -> {:open_curly, token}
+      token == "}" -> {:close_curly, token}
+      token == ";" -> {:semicolon, token}
+      String.match?(token, ~r/^\d+$/) -> {:integer, token}
       String.match?(token, ~r/[A-Za-z]/) -> {:identifier, token}
-      String.match?(token, ~r/\(/) -> {:open_paren, token}
-      String.match?(token, ~r/\)/) -> {:close_paren, token}
-      String.match?(token, ~r/\{/) -> {:open_curly, token}
-      String.match?(token, ~r/\}/) -> {:close_curly, token}
       true -> {:unknown, "\"#{token}\""}
     end
   end
