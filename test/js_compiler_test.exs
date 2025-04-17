@@ -167,6 +167,14 @@ defmodule JsCompilerTest do
       {:py_integer, "1"},
       {:py_newline},
       {:py_function_end},
+      {:py_identifier, "print"},
+      {:py_open_paren},
+      {:py_identifier, "foo"},
+      {:py_open_paren},
+      {:py_integer, "5"},
+      {:py_close_paren},
+      {:py_close_paren},
+      {:py_newline},
       {:py_eof}
     ]
 
@@ -174,9 +182,10 @@ defmodule JsCompilerTest do
 
     [_, py] = read_fixture("function_with_body")
 
-    assert String.trim(code) == String.trim(py)
+    assert String.trim_trailing(code) == String.trim_trailing(py)
+    IO.puts(code)
 
     {output, 0} = System.cmd("python", ["-c", code])
-    IO.puts(output)
+    assert String.trim_trailing(output) == "6"
   end
 end

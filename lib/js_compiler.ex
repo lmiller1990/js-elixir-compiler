@@ -142,7 +142,7 @@ defmodule Codegen do
   end
 
   def generate([{:py_function_end} | rest], code) do
-    code = code <> ""
+    code = code <> "\n\n"
     generate(rest, code)
   end
 
