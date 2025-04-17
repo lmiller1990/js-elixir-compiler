@@ -60,6 +60,26 @@ defmodule Parser do
     parse(rest, ast)
   end
 
+  def parse([{:return, _} | rest], ast) do
+    ast = ast ++ [{:py_return}]
+    parse(rest, ast)
+  end
+
+  def parse([{:add, _} | rest], ast) do
+    ast = ast ++ [{:py_add}]
+    parse(rest, ast)
+  end
+
+  def parse([{:integer, int} | rest], ast) do
+    ast = ast ++ [{:py_integer, int}]
+    parse(rest, ast)
+  end
+
+  def parse([{:semicolon, _} | rest], ast) do
+    ast = ast ++ [{:py_newline}]
+    parse(rest, ast)
+  end
+
   def parse([{:identifier, label} | rest], ast) do
     ast = ast ++ [{:py_identifier, label}]
     parse(rest, ast)
@@ -83,5 +103,66 @@ defmodule Parser do
   def parse([{:close_curly, _} | rest], ast) do
     ast = ast ++ [{:py_function_end}]
     parse(rest, ast)
+  end
+end
+
+defmodule Codegen do
+  def generate([{:py_function_def} | rest], code) do
+    code = code <> "def "
+    generate(rest, code)
+  end
+
+  def generate([{:py_eof}], code) do
+    code <> "\n"
+  end
+
+  def generate([{:py_identifier, label} | rest], code) do
+    code = code <> label
+    generate(rest, code)
+  end
+
+  def generate([{:py_open_paren} | rest], code) do
+    code = code <> "("
+    generate(rest, code)
+  end
+
+  def generate([{:py_close_paren} | rest], code) do
+    code = code <> ")"
+    generate(rest, code)
+  end
+
+  def generate([{:py_function_colon}, {:py_function_end} | rest], code) do
+    code = code <> ":\n" <> String.duplicate(" ", 4) <> "pass"
+    generate(rest, code)
+  end
+
+  def generate([{:py_function_colon} | rest], code) do
+    code = code <> ":\n" <> String.duplicate(" ", 4)
+    generate(rest, code)
+  end
+
+  def generate([{:py_function_end} | rest], code) do
+    code = code <> ""
+    generate(rest, code)
+  end
+
+  def generate([{:py_return} | rest], code) do
+    code = code <> "return "
+    generate(rest, code)
+  end
+
+  def generate([{:py_add} | rest], code) do
+    code = code <> " + "
+    generate(rest, code)
+  end
+
+  def generate([{:py_integer, int} | rest], code) do
+    code = code <> "#{int}"
+    generate(rest, code)
+  end
+
+  def generate([{:py_newline} | rest], code) do
+    code = code <> "\n"
+    generate(rest, code)
   end
 end
