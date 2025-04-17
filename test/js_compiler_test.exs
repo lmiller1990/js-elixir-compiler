@@ -65,7 +65,7 @@ defmodule JsCompilerTest do
       {:eof}
     ]
 
-    ast = Parser.parse(tokens, [])
+    ast = Parser.parse(tokens)
 
     expected = [
       {:py_function_def},
@@ -108,7 +108,7 @@ defmodule JsCompilerTest do
              {:eof}
            ]
 
-    ast = Parser.parse(tokens, [])
+    ast = Parser.parse(tokens)
 
     assert ast == [
              {:py_function_def},

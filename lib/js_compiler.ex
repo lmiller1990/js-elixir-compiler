@@ -51,57 +51,61 @@ defmodule Tokenizer do
 end
 
 defmodule Parser do
+  def parse(nodes) do
+    Enum.reverse(parse(nodes, []))
+  end
+
   def parse([{:eof}], ast) do
-    ast ++ [{:py_eof}]
+    [{:py_eof} | ast]
   end
 
   def parse([{:function, _} | rest], ast) do
-    ast = ast ++ [{:py_function_def}]
+    ast = [{:py_function_def} | ast]
     parse(rest, ast)
   end
 
   def parse([{:return, _} | rest], ast) do
-    ast = ast ++ [{:py_return}]
+    ast = [{:py_return} | ast]
     parse(rest, ast)
   end
 
   def parse([{:add, _} | rest], ast) do
-    ast = ast ++ [{:py_add}]
+    ast = [{:py_add} | ast]
     parse(rest, ast)
   end
 
   def parse([{:integer, int} | rest], ast) do
-    ast = ast ++ [{:py_integer, int}]
+    ast = [{:py_integer, int} | ast]
     parse(rest, ast)
   end
 
   def parse([{:semicolon, _} | rest], ast) do
-    ast = ast ++ [{:py_newline}]
+    ast = [{:py_newline} | ast]
     parse(rest, ast)
   end
 
   def parse([{:identifier, label} | rest], ast) do
-    ast = ast ++ [{:py_identifier, label}]
+    ast = [{:py_identifier, label} | ast]
     parse(rest, ast)
   end
 
   def parse([{:open_paren, _} | rest], ast) do
-    ast = ast ++ [{:py_open_paren}]
+    ast = [{:py_open_paren} | ast]
     parse(rest, ast)
   end
 
   def parse([{:close_paren, _} | rest], ast) do
-    ast = ast ++ [{:py_close_paren}]
+    ast = [{:py_close_paren} | ast]
     parse(rest, ast)
   end
 
   def parse([{:open_curly, _} | rest], ast) do
-    ast = ast ++ [{:py_function_colon}]
+    ast = [{:py_function_colon} | ast]
     parse(rest, ast)
   end
 
   def parse([{:close_curly, _} | rest], ast) do
-    ast = ast ++ [{:py_function_end}]
+    ast = [{:py_function_end} | ast]
     parse(rest, ast)
   end
 end
