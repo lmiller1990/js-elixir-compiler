@@ -46,6 +46,3 @@ defmodule Tokenizer do
     IO.puts("#{content} type => #{type}")
   end
 end
-
-tokens = Compiler.read_src() |> Tokenizer.run()
-Enum.each(tokens, &Tokenizer.log_token_info/1)
