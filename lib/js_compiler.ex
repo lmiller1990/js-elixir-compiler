@@ -9,9 +9,12 @@ end
 
 defmodule Tokenizer do
   def run(src) do
-    src
-    |> tokenize()
-    |> Enum.map(&match_token/1)
+    tokens =
+      src
+      |> tokenize()
+      |> Enum.map(&match_token/1)
+
+    tokens ++ [{:eof}]
   end
 
   def tokenize(src) do
@@ -44,5 +47,41 @@ defmodule Tokenizer do
 
   def log_token_info({type, content}) do
     IO.puts("#{content} type => #{type}")
+  end
+end
+
+defmodule Parser do
+  def parse([{:eof}], ast) do
+    ast ++ [{:py_eof}]
+  end
+
+  def parse([{:function, _} | rest], ast) do
+    ast = ast ++ [{:py_function_def}]
+    parse(rest, ast)
+  end
+
+  def parse([{:identifier, label} | rest], ast) do
+    ast = ast ++ [{:py_identifier, label}]
+    parse(rest, ast)
+  end
+
+  def parse([{:open_paren, _} | rest], ast) do
+    ast = ast ++ [{:py_open_paren}]
+    parse(rest, ast)
+  end
+
+  def parse([{:close_paren, _} | rest], ast) do
+    ast = ast ++ [{:py_close_paren}]
+    parse(rest, ast)
+  end
+
+  def parse([{:open_curly, _} | rest], ast) do
+    ast = ast ++ [{:py_function_colon}]
+    parse(rest, ast)
+  end
+
+  def parse([{:close_curly, _} | rest], ast) do
+    ast = ast ++ [{:py_function_end}]
+    parse(rest, ast)
   end
 end
